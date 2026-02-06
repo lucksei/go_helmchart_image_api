@@ -6,12 +6,12 @@ import (
 	"github.com/goccy/go-yaml"
 )
 
-func ContainersSpecSearch(m map[string]interface{}, res *[]any) {
+func ContainersSpecSearch(m map[string]any, res *[]any) {
 	for k, v := range m {
 		if k == "containers" {
 			*res = append(*res, v.([]any))
 		}
-		if m, ok := v.(map[string]interface{}); ok {
+		if m, ok := v.(map[string]any); ok {
 			ContainersSpecSearch(m, res)
 		}
 	}
@@ -21,7 +21,7 @@ func GetImagesFromRendered(r map[string]string) []string {
 	var images = []string{}
 	for key, value := range r {
 		if strings.Contains(key, ".yaml") {
-			var template map[string]interface{}
+			var template map[string]any
 			yaml.Unmarshal([]byte(value), &template)
 
 			var containerSpecList []any
@@ -33,6 +33,5 @@ func GetImagesFromRendered(r map[string]string) []string {
 			}
 		}
 	}
-
 	return images
 }

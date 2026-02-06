@@ -32,11 +32,17 @@ func HelmChartPost(c *gin.Context) {
 		}
 
 		images := utils.GetImagesFromRendered(rendered)
-		fmt.Printf("%v\n", images)
+		for _, image := range images {
+			imageInfo, err := utils.PullImageAndParseAPIInfo(image)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("%v\n", imageInfo)
+		}
 	}()
 
 	c.Writer.Header().Set("Location", fmt.Sprintf("/api/helm-chart/%s", helmChartId))
-	c.Status(http.StatusAccepted)
+	c.Status(http.StatusSeeOther)
 }
 
 func HelmChartGet(c *gin.Context) {
@@ -47,6 +53,7 @@ func HelmChartGet(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, models.HelmChartResponse{
+		Status:    models.InProgress,
 		RepoURL:   helmChartPath.RepoURL,
 		ChartPath: helmChartPath.ChartPath,
 		Images:    []models.ChartImage{},

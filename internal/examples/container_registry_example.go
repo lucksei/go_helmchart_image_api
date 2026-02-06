@@ -8,9 +8,10 @@ import (
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 )
 
-func containerRegistryCustomExample() {
+func ContainerRegistryCustomExample() {
 	fmt.Println("Parsing image reference...")
 	ref, err := name.ParseReference("docker.io/kooldev/pause:latest")
+	// ref, err := name.ParseReference("docker.io/registry:2")
 	if err != nil {
 		panic(err)
 	}
@@ -19,10 +20,17 @@ func containerRegistryCustomExample() {
 	if err != nil {
 		panic(err)
 	}
+	if s, err := img.Size(); err != nil {
+		panic(err)
+	} else {
+		fmt.Printf("Size (from image): %d\n", s)
+	}
 
 	manifest, err := img.Manifest()
-	for _, layer := range manifest.Layers {
+	fmt.Printf("Size (from manifest.Config.Size): %d\n", manifest.Config.Size)
+	for i, layer := range manifest.Layers {
 		digest := layer.Digest
-		fmt.Println(digest.String())
+		size := layer.Size
+		fmt.Printf("%d: %s (%d) \n", i, digest.String(), size)
 	}
 }
