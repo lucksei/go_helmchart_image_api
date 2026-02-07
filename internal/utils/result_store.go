@@ -75,6 +75,7 @@ func (r *ResultStore) Get(key string) (HelmChartAnalysis, Status) {
 		RepoURL:  orig.RepoURL,
 		ChartRef: orig.ChartRef,
 	}
+	newCopy.Images = make([]ImageAnalysis, len(orig.Images))
 	copy(newCopy.Images, orig.Images)
 	return newCopy, StatusSuccess
 }
@@ -86,20 +87,22 @@ func (r *ResultStore) Put(key string, v HelmChartAnalysis) {
 		RepoURL:  v.RepoURL,
 		ChartRef: v.ChartRef,
 	}
-	images := []ImageAnalysis{}
-	for _, img := range v.Images {
-		images = append(images, ImageAnalysis{
-			Name:        img.Name,
-			Size:        img.Size,
-			LayerNumber: img.LayerNumber,
-		})
-	}
-	newCopy.Images = images
+	newCopy.Images = make([]ImageAnalysis, len(v.Images))
+	copy(newCopy.Images, v.Images)
+	// images := []ImageAnalysis{}
+	// for _, img := range v.Images {
+	// 	images = append(images, ImageAnalysis{
+	// 		Name:        img.Name,
+	// 		Size:        img.Size,
+	// 		LayerNumber: img.LayerNumber,
+	// 	})
+	// }
+	// newCopy.Images = images
 	r.store[key] = StoredResult{
 		Value:  newCopy,
 		Status: StatusSuccess,
 	}
-
+	fmt.Printf("in the put operation: %v\n", r.store[key])
 	r.mu.Unlock()
 }
 

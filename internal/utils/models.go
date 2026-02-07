@@ -8,7 +8,7 @@ type ImageAnalysis struct {
 
 type HelmChartSource struct {
 	RepoURL  string `json:"repo_url"`
-	ChartRef string `json:"chart_ref"`
+	ChartRef string `json:"chart_ref" binding:"required"` // TODO: Add to documentation later on. For remote, Can be a .tgz URI, a oci:// URI, or if RepoURL is set, a chart name from the repo specified
 }
 
 type HelmChartAnalysis struct {

@@ -74,9 +74,10 @@ func HelmChartPost(c *gin.Context) {
 			imagesAnalysis = append(imagesAnalysis, imageAnalysis)
 		}
 		result.Images = imagesAnalysis
+		fmt.Printf("%v\n", result)
 
 		rs.Put(helmChartId, result)
-		fmt.Printf("Done processing helm chart %s\n", helmChartId)
+		fmt.Printf("Done processing helm chart %s\n", helmChartSource.ChartRef)
 	}()
 
 	c.Writer.Header().Set("Location", fmt.Sprintf("/api/helm-chart/%s", helmChartId))
@@ -99,7 +100,13 @@ func HelmChartGet(c *gin.Context) {
 	if status == utils.StatusInProgress {
 		return
 	}
+	if status == utils.StatusNotFound {
+		c.Status(http.StatusNotFound)
+		return
+	}
+
 	fmt.Printf("TODO make this into a response later:\n%v\n", result)
+	c.JSON(http.StatusOK, result)
 	// TODO: Ugly conversion, fix or move to helper inside the models
 	// result, ok := rs.Get(id)
 	// if !ok {
