@@ -93,12 +93,15 @@ func HelmChartGet(c *gin.Context) {
 	}
 	result, status := rs.Get(id)
 	if status == utils.StatusInProgress {
-		c.Error(fmt.Errorf("Analysis of the helm chart is still in progress"))
+		c.JSON(http.StatusOK, gin.H{
+			"status": "Analysis of the helm chart is still in progress",
+		})
 		return
 	}
 	if status == utils.StatusNotFound {
-		c.Status(http.StatusNotFound)
-		c.Error(fmt.Errorf("Analysis not found. It has to be processed first by the POST /api/helm-chart endpoint"))
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": "Analysis not found. It has to be processed first by the POST /api/helm-chart endpoint",
+		})
 		return
 	}
 
