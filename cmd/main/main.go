@@ -9,6 +9,7 @@ import (
 
 func main() {
 	router := gin.Default()
+	router.Use(middleware.ErrorHandler())
 
 	// NOTE: Initialize the result store BEFORE defining the methods, it will panic if not.
 	// This is required to access the result store inside the endpoints

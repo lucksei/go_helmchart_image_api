@@ -14,6 +14,7 @@ func HelmChartPost(c *gin.Context) {
 	err := c.BindJSON(&jsonBody)
 	if err != nil {
 		c.Error(err)
+		return
 	}
 
 	// Create an ID for the specific helm chart source
@@ -21,12 +22,14 @@ func HelmChartPost(c *gin.Context) {
 	helmChartId, err := helmChartSource.ToBase64Id()
 	if err != nil {
 		c.Error(err)
+		return
 	}
 
 	// Loading the result store
 	rs, ok := c.MustGet("result_store").(*utils.ResultStore)
 	if !ok {
 		c.Error(err)
+		return
 	}
 
 	// If the helm chart is being processed, accept (202)
@@ -86,15 +89,16 @@ func HelmChartGet(c *gin.Context) {
 	rs, ok := c.MustGet("result_store").(*utils.ResultStore)
 	if !ok {
 		c.Error(fmt.Errorf("Failed to retrieve ResultStore"))
+		return
 	}
 	result, status := rs.Get(id)
 	if status == utils.StatusInProgress {
-		// TODO: Change response to show that the request is in progress
+		c.Error(fmt.Errorf("Analysis of the helm chart is still in progress"))
 		return
 	}
 	if status == utils.StatusNotFound {
 		c.Status(http.StatusNotFound)
-		// TODO: Change the response to show that the helm chart was not found, and that it has to be processed by the POST /apu/helm-chart endpoint
+		c.Error(fmt.Errorf("Analysis not found. It has to be processed first by the POST /api/helm-chart endpoint"))
 		return
 	}
 
