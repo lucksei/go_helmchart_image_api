@@ -89,15 +89,6 @@ func (r *ResultStore) Put(key string, v HelmChartAnalysis) {
 	}
 	newCopy.Images = make([]ImageAnalysis, len(v.Images))
 	copy(newCopy.Images, v.Images)
-	// images := []ImageAnalysis{}
-	// for _, img := range v.Images {
-	// 	images = append(images, ImageAnalysis{
-	// 		Name:        img.Name,
-	// 		Size:        img.Size,
-	// 		LayerNumber: img.LayerNumber,
-	// 	})
-	// }
-	// newCopy.Images = images
 	r.store[key] = StoredResult{
 		Value:  newCopy,
 		Status: StatusSuccess,
@@ -111,5 +102,11 @@ func (r *ResultStore) SetPending(key string) {
 	r.store[key] = StoredResult{
 		Status: StatusInProgress,
 	}
+	r.mu.Unlock()
+}
+
+func (r *ResultStore) UnsetPending(key string) {
+	r.mu.Lock()
+	delete(r.store, key)
 	r.mu.Unlock()
 }

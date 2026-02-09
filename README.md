@@ -4,6 +4,20 @@ Exercise for an API that accepts a link to a helm chart, searches for container 
 
 Built with Go using Gin Framework.
 
+## Usage
+
+Run
+
+```sh
+go run ./cmd/main
+```
+
+Build
+
+```sh
+go build ./cmd/main -o go-chart-image-analyzer-api
+```
+
 ## API Endpoints
 
 ### GET /health

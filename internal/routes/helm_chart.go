@@ -52,7 +52,10 @@ func HelmChartPost(c *gin.Context) {
 		fmt.Printf("Processing helm chart %s\n", helmChartSource.ChartRef)
 		rendered, err := utils.RenderHelmTemplate(helmChartSource)
 		if err != nil {
-			panic(err)
+			rs.UnsetPending(helmChartId)
+			c.Status(500)
+			c.Error(err)
+			return
 		}
 
 		images := utils.GetImagesFromRendered(rendered)
@@ -66,7 +69,10 @@ func HelmChartPost(c *gin.Context) {
 		for i, image := range images {
 			imageAnalysis, err := utils.PullImageAndParseAPIInfo(image)
 			if err != nil {
-				panic(err)
+				rs.UnsetPending(helmChartId)
+				c.Status(500)
+				c.Error(err)
+				return
 			}
 			fmt.Printf("Image %d: %s\n", i, imageAnalysis.Name)
 			imagesAnalysis = append(imagesAnalysis, imageAnalysis)
