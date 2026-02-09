@@ -12,10 +12,11 @@ Run
 go run ./cmd/main
 ```
 
-Build
+Build & run
 
 ```sh
-go build ./cmd/main -o
+go build -o ./bin/main ./cmd/main
+./bin/main
 ```
 
 ## API Endpoints
